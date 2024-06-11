@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Inventory System</title>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <style>
+        #qr-reader {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Shop Inventory System</h1>
+    <div id="qr-reader"></div>
+    <div id="result"></div>
+    <script>
+        function onScanSuccess(qrCodeMessage) {
+            fetch(`/item/${qrCodeMessage}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('result').innerText = data.error;
+                    } else {
+                        document.getElementById('result').innerHTML = `
+                            <h3>Item Details</h3>
+                            <p><strong>Item Name:</strong> ${data.ItemName}</p>
+                            <p><strong>Description:</strong> ${data.Description}</p>
+                            <p><strong>Keywords:</strong> ${data.Keywords}</p>
+                            <p><strong>Tote:</strong> ${data.ToteDescription}</p>
+                            <p><strong>Location:</strong> ${data.LocationDescription}</p>
+                        `;
+                    }
+                });
+        }
+
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess);
+    </script>
+</body>
+</html>
